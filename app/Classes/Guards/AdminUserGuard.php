@@ -3,7 +3,6 @@
 
 namespace App\Classes\Guards;
 
-use App\Classes\Redis\WlRedis;
 use App\Classes\Redis\XRedis;
 use App\Models\AdminUser;
 use Illuminate\Http\Request;

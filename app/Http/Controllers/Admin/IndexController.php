@@ -18,7 +18,6 @@ class IndexController extends Controller
     public function login()
     {
 
-        echo 44;exit();
         Auth::attempt(['account' => $this->request['account'], 'password' => $this->request['password']]);
 
         echo '成功登入';exit();
