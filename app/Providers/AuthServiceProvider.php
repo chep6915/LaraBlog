@@ -6,7 +6,6 @@ use App\Classes\Guards\AdminUserGuard;
 use Illuminate\Auth\RequestGuard;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -29,7 +28,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->registerPolicies();
 
         //
-        Auth::extend('adminUserGuard', function($app, $name, array $config) {
+        Auth::extend('adminUserGuard', function ($app, $name, array $config) {
             return new RequestGuard(function ($request) use ($config) {
                 return (new AdminUserGuard())->user($request);
             }, $this->app['request']);

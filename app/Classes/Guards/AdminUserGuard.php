@@ -4,6 +4,7 @@
 namespace App\Classes\Guards;
 
 use App\Classes\Redis\WlRedis;
+use App\Classes\Redis\XRedis;
 use App\Models\AdminUser;
 use Illuminate\Http\Request;
 use Illuminate\Auth\GuardHelpers;
@@ -32,9 +33,8 @@ class AdminUserGuard
     public function user(Request $request): ?AdminUser
     {
 
-        $token = $request->bearerToken();
+        $adminUser = XRedis::getUserFromRedis($request->bearerToken());
 
-        $adminUser = WlRedis::getUserFromRedis($token);
         if ($adminUser) {
             return new AdminUser($adminUser);
         }

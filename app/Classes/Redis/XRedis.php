@@ -6,7 +6,7 @@ use App\Models\AdminUser;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Request;
 
-class WlRedis extends Redis
+class XRedis extends Redis
 {
 
     /**
@@ -78,7 +78,8 @@ class WlRedis extends Redis
      */
     public static function getUserFromRedis($token)
     {
-        $adminUserIP = getUserIp();
+//        $adminUserIP = getUserIp();
+        $adminUserIP = '127.0.0.1';
 
         if (!isset(explode('#', $token)[1])) {
             return false;
