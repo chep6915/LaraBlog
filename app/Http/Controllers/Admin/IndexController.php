@@ -2,26 +2,28 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Classes\Redis\XRedis;
+use App\Bases\BaseController;
+use App\Concretes\IndexConcrete;
 use App\Exceptions\JsException;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
-class IndexController extends Controller
+class IndexController extends BaseController
 {
-    public function __construct(Request $request)
+
+    /**
+     * @var IndexConcrete
+     */
+    private $indexConcrete;
+
+    public function __construct(Request $request, IndexConcrete $indexConcrete)
     {
+        $this->indexConcrete = $indexConcrete;
         parent::__construct($request);
     }
 
-    public function login()
+    public function login(): \Illuminate\Http\JsonResponse
     {
-
-        Auth::attempt(['account' => $this->request['account'], 'password' => $this->request['password']]);
-
-        echo '成功登入';exit();
-
+        return $this->indexConcrete->login($this->request);
     }
 
 }

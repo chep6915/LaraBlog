@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Bases;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Arr;
 
-class Controller extends BaseController
+class BaseController extends Controller
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     /**
-     * @var Request
+     * @var array
      */
     protected $request;
 
@@ -26,7 +26,6 @@ class Controller extends BaseController
     {
         if (PHP_SAPI != "cli")
             $this->validateRequest($request);
-        $this->request = $request;
     }
 
 //    public function validate(Request $request, array $rules,
@@ -44,15 +43,17 @@ class Controller extends BaseController
      */
     protected function validateRequest(Request $request, string $name = '')
     {
+
         if (!$validator = $this->getValidator($request, $name)) {
             return;
         }
 
         $rules = Arr::get($validator, 'rules', []);
         $messages = Arr::get($validator, 'messages', []);
+        $params = Arr::get($validator, 'params', []);
 
         $this->validate($request, $rules, $messages);
-
+        $this->request = (isset($params) && !empty($params)) ? $request->only($params) : $request->all();
     }
 
     /**
@@ -78,5 +79,4 @@ class Controller extends BaseController
 
         return call_user_func([new $class, $method]);
     }
-
 }

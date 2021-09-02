@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Bases\BaseController;
 use App\Models\AdminUser;
 use Illuminate\Http\Request;
 
-class AdminUserController extends Controller
+class AdminUserController extends BaseController
 {
     /**
      * Display a listing of the resource.

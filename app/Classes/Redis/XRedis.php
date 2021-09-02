@@ -3,6 +3,7 @@
 namespace App\Classes\Redis;
 
 use App\Models\AdminUser;
+
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Request;
 
@@ -11,9 +12,9 @@ class XRedis extends Redis
 
     /**
      * @param AdminUser $adminUser
-     * @return string
+     * @return AdminUser
      */
-    public static function loginSetUser($adminUser)
+    public static function loginSetUser(AdminUser $adminUser): AdminUser
     {
 
         $userToken = strtotime(now()) . $adminUser['admin_user_id'];
@@ -25,7 +26,8 @@ class XRedis extends Redis
         }
 
         $adminUser['token'] = md5($adminUser['admin_user_id'] . strtotime(now())) . '#' . base64_encode($userToken);
-        parent::setex($redisToken,config('app.redis_timeout'),serialize($adminUser));
+//        parent::setex($redisToken,config('app.redis_timeout'),serialize($adminUser));
+        parent::setex($redisToken,6000,serialize($adminUser));
 
         return $adminUser;
     }
