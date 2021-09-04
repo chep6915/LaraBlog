@@ -2,6 +2,7 @@
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png" />
     <HelloWorld msg="Welcome to Your Vue.js App" />
+    <el-button type="danger" icon="el-icon-delete" round> 我是 ElButton </el-button>
   </div>
 </template>
 
@@ -10,11 +11,13 @@
 import HelloWorld from "@/components/HelloWorld.vue";
 import { mapGetters } from "vuex";
 import { defineComponent, ref } from "vue";
+import { ElButton } from "element-plus";
 
 export default defineComponent({
   name: "Home",
   components: {
     HelloWorld,
+    ElButton
   },
   setup() {
     return {
