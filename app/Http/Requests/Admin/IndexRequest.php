@@ -21,14 +21,14 @@ class IndexRequest extends BaseRequest
     {
         return [
             'rules' => [
-                'account' => 'required|string|max:20',
+                'email' => 'required|string|max:20',
                 'password' => 'required|min:6|max:30',
             ],
             'messages' => [
-                'account.required' => 'asdfdsaf'
+                'email.required' => 'asdfdsaf'
             ],
             'params' => [
-                'account',
+                'email',
                 'password'
             ]
         ];

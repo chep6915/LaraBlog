@@ -55,13 +55,14 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $e)
     {
-        if($request->expectsJson())
-        {
-
-        }else{
-            return parent::render($request,new NotFoundHttpException());
-        }
+//        if($request->expectsJson())
+//        {
+//
+//        }else{
+//            return parent::render($request,new NotFoundHttpException());
+//        }
         log::info('exception generate');
+        log::error(json_encode($e));
         //Validate驗證錯誤ValidationException
         return parent::render($request, $e);
     }

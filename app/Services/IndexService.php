@@ -33,7 +33,7 @@ class IndexService extends BaseService
     public function login($request)
     {
 
-        if (!Auth::attempt(['account' => $request['account'], 'password' => $request['password']])) {
+        if (!Auth::attempt(['email' => $request['email'], 'password' => $request['password']])) {
 //            throw new UnAuthenticatedException();
         }
 
