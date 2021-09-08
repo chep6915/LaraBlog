@@ -9,6 +9,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Throwable;
 
@@ -54,7 +55,12 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $e)
     {
-        HttpResponseException::class
+        if($request->expectsJson())
+        {
+
+        }else{
+            return parent::render($request,new NotFoundHttpException());
+        }
         log::info('exception generate');
         //Validate驗證錯誤ValidationException
         return parent::render($request, $e);
