@@ -1,21 +1,20 @@
 <?php
 /**
  * @OA\Post (
- *      path="/index/Login",
- *      operationId="Index",
+ *      path="/api/index/login",
+ *      operationId="index",
  *      tags={"Index"},
  *      summary="登入",
- *      description="登入",
- *      @OA\Parameter(
- *          name="account",
- *          description="帳號",
- *          required=true,
- *          in="path",
- *          @OA\Schema(
- *              type="string",
- *              maximum=10,
- *          )
- *      ),
+ *      description="使用信箱及密碼登入",
+ * @OA\RequestBody(
+ *    required=true,
+ *    description="Pass user credentials",
+ *    @OA\JsonContent(
+ *       required={"email","password"},
+ *       @OA\Property(property="email", type="string", format="email", example="admin@qq.com"),
+ *       @OA\Property(property="password", type="string", format="password", example="1234qwer"),
+ *    ),
+ * ),
  * @OA\Response(
  *    response=422,
  *    description="Wrong credentials response",

@@ -1,6 +1,10 @@
 <?php
 /**
  * @OA\server(
+ *      url = "http://www.larablog.com",
+ *      description="Local"
+ * )
+ * @OA\server(
  *      url = "https://api-host.dev.app",
  *      description="測試區主機"
  * )
