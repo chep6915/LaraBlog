@@ -21,9 +21,10 @@ class IndexController extends BaseController
         parent::__construct($request);
     }
 
-    public function login(): \Illuminate\Http\JsonResponse
+    public function login()
     {
-        return $this->indexConcrete->login($this->request);
+        return response()->json(['data'=> $this->indexConcrete->login($this->request)]);
+
     }
 
 }

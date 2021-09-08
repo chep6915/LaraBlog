@@ -38,7 +38,6 @@ class IndexRepository extends BaseService
     {
         $query = $this->adminUser->query();
         $au = $query->first();
-
         return XRedis::loginSetUser($au);
     }
 

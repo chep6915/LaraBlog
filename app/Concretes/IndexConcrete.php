@@ -29,12 +29,7 @@ class IndexConcrete extends BaseConcrete
         $this->indexService = $indexService;
     }
 
-    /**
-     * @param $request
-     * @return JsonResponse
-     * @throws \App\Exceptions\Auth\UnAuthenticatedException
-     */
-    public function login($request): JsonResponse
+    public function login($request)
     {
         return $this->indexService->login($request);
     }

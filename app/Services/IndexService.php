@@ -30,12 +30,7 @@ class IndexService extends BaseService
         $this->indexRepository = $indexRepository;
     }
 
-    /**
-     * @param $request
-     * @return JsonResponse
-     * @throws UnAuthenticatedException
-     */
-    public function login($request): JsonResponse
+    public function login($request)
     {
 
         if (!Auth::attempt(['account' => $request['account'], 'password' => $request['password']])) {
