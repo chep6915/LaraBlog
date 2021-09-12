@@ -7,7 +7,7 @@ use BenSampo\Enum\Enum;
 /**
  *
  */
-final class ResponseErrorCode extends Enum
+final class ResponseCode extends Enum
 {
     // 成功
     const Success = 1;

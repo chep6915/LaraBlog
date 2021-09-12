@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Admin;
 
 use App\Bases\BaseRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Validation\ValidationException;
 
 class IndexRequest extends BaseRequest
 {
@@ -26,6 +28,9 @@ class IndexRequest extends BaseRequest
             ],
             'messages' => [
                 'email.required' => 'asdfdsaf'
+            ],
+            'codes' => [
+                'email.required' => '132'
             ],
             'params' => [
                 'email',
@@ -85,5 +90,4 @@ class IndexRequest extends BaseRequest
             ]
         ];
     }
-
 }

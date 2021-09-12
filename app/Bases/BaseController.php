@@ -2,12 +2,15 @@
 
 namespace App\Bases;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\Factory;
+use Illuminate\Validation\ValidationException;
 
 class BaseController extends Controller
 {
@@ -50,9 +53,11 @@ class BaseController extends Controller
 
         $rules = Arr::get($validator, 'rules', []);
         $messages = Arr::get($validator, 'messages', []);
+        $codes = Arr::get($validator, 'codes', []);
         $params = Arr::get($validator, 'params', []);
+        $s = $this->getValidationFactory();
+        $this->validate($request, $rules, $messages,$codes);
 
-        $this->validate($request, $rules, $messages);
         $this->request = (isset($params) && !empty($params)) ? $request->only($params) : $request->all();
     }
 
@@ -79,4 +84,5 @@ class BaseController extends Controller
 
         return call_user_func([new $class, $method]);
     }
+
 }
