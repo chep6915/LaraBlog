@@ -20,3 +20,6 @@ yarn-error.log
 
 composer.phar
 /.env.real_data
+404.html
+index.html
+public/.user.ini
