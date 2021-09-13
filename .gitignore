@@ -23,3 +23,4 @@ composer.phar
 404.html
 index.html
 public/.user.ini
+.htaccess
