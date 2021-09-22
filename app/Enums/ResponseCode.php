@@ -17,4 +17,7 @@ final class ResponseCode extends Enum
     //身分相關200000
     const UnAuthenticatedError = 200000;
 
+    //參數驗證相關
+    const ValidationFailedError = 300000;
+
 }

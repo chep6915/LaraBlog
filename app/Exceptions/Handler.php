@@ -61,13 +61,6 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $e)
     {
 
-//        Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-//        Symfony\Component\Routing\Exception\RouteNotFoundException
-//        RouteNotFoundException::class
-//        $this->convertDefaultException($e);
-
-//        echo get_class($e);exit();
-
         if ($request->expectsJson()) {
 
             if ($e instanceof AuthenticationException)
@@ -78,19 +71,18 @@ class Handler extends ExceptionHandler
                 ], 401);
 
             if ($e instanceof ValidationException) {
-                echo $e->validator->getMessageBag();exit();
                 $data = [
-                    'code' => ResponseCode::UnAuthenticatedError,
+                    'code' => ResponseCode::ValidationFailedError,
                     'data' => [],
                     'total' => 0
                 ];
 
                 if (config('app.debug')) {
                     $data['msg'] = $e->getMessage();
-                    $data['err'] = $e->errors();
+                    $data['error'] = $e->errors();
                 }
 
-                return response()->json([$data], 422);
+                return response()->json($data, 422);
             }
 
 //            return config('app.debug') ? [
@@ -117,23 +109,4 @@ class Handler extends ExceptionHandler
         return parent::render($request, $e);
     }
 
-    /**
-     * Convert a default exception to an API exception.
-     *
-     * @param Exception|Throwable $exception
-     * @return void
-     */
-    protected function convertDefaultException($exception)
-    {
-        $this->convert($exception, [
-            AuthenticationException::class => UnauthenticatedHttpException::class,
-            AuthorizationException::class => UnauthorizedHttpException::class,
-            NotFoundHttpException::class => PageNotFoundHttpException::class,
-            ModelNotFoundException::class => PageNotFoundHttpException::class,
-//            \Illuminate\Database\Eloquent\RelationNotFoundException::class => RelationNotFoundException::class,
-            ValidationException::class => function ($exception) {
-                throw new ValidationFailedHttpException($exception->validator);
-            },
-        ]);
-    }
 }
