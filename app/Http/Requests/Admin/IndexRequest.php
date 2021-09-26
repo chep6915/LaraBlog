@@ -27,7 +27,6 @@ class IndexRequest extends BaseRequest
                 'password' => 'required|min:6|max:30',
             ],
             'messages' => [
-                'email.required' => 'asdfdsaf'
             ],
             'codes' => [
                 'email.required' => '132'

@@ -29,4 +29,14 @@ class AdminUser extends Authenticatable
     {
         return XRedis::loginSetUser($this->toArray());
     }
+
+    /**
+     * @param \DateTimeInterface $date
+     * @return string
+     */
+    protected function serializeDate(\DateTimeInterface $date): string
+    {
+        return $date->format($this->getDateFormat());
+    }
+
 }

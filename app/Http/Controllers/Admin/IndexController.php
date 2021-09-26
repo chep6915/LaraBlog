@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Bases\BaseController;
 use App\Concretes\IndexConcrete;
+use App\Enums\ResponseCode;
 use App\Exceptions\JsException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +29,14 @@ class IndexController extends BaseController
 
     public function login(): \Illuminate\Http\JsonResponse
     {
-        return response()->json(['data' => $this->indexConcrete->login($this->request)]);
+
+        return response()->json(
+            [
+                'code'  =>  ResponseCode::Success,
+                'data'  =>  [$this->indexConcrete->login($this->request)],
+                'total' => 1
+            ]
+        );
     }
 
     public function redirectToProvider(): RedirectResponse

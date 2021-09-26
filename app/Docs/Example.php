@@ -28,8 +28,8 @@
  *                  @OA\Items(
  *                      type="object",
  *                      format="query",
- *                      @OA\Property(property="name", type="string", ),
- *                      @OA\Property(property="category", type="string",),
+ *                      @OA\Property(property="name", type="string" , example="Sorry"),
+ *                      @OA\Property(property="category", type="string" , example="Sorry"),
  *                  ),
  *              ),
  *              @OA\Property(
@@ -40,6 +40,36 @@
  *                      format="query",
  *                  ),
  *                  example="[]"
+ *              ),
+ *              @OA\Property(
+ *                  property="error",
+ *                  type="array",
+ *                  @OA\Items(
+ *                      type="object",
+ *                      format="query",
+ *                      @OA\Property(
+ *                          property="email",
+ *                          type="array",
+ *                          collectionFormat="multi",
+ *                          @OA\Items(
+ *                              type="string",
+ *                              example={"The email field is required.","The email must be a valid email address."},
+ *                          )
+ *                      )
+ *                  )
+ *              ),
+ *              @OA\Property(
+ *                  property="prom1",
+ *                  type="object",
+ *                  @OA\Property(
+ *                      property="email",
+ *                      type="array",
+ *                      collectionFormat="multi",
+ *                      @OA\Items(
+ *                          type="string",
+ *                          example={"The email field is required.","The email must be a valid email address."},
+ *                      )
+ *                  )
  *              ),
  *          )
  *      )
