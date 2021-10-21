@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Bases\BaseController;
+use App\Concretes\AdminUserConcrete;
 use App\Concretes\IndexConcrete;
 use App\Exceptions\JsException;
 use Illuminate\Http\Request;
@@ -40,8 +41,14 @@ class IndexController extends BaseController
     public function handleProviderCallback()
     {
         try {
-            $user = Socialite::driver('google')->stateless()->user();
-            print_r($user);
+            $au = Socialite::driver('google')->stateless()->user();
+            if (isset($au)) {
+                $au = array($au);
+                $auConcrete = new AdminUserConcrete();
+//                $au = $auConcrete->get([],['email'=>$au['user']['email']]);
+            }
+
+            echo json_encode($au);
             exit();
 //            [token] => ya29.a0ARrdaM8_40cuNCsFQsLIdELKqThCyVNVdIHBo6sCjqViimwnV3jmvNr_fgtyxDKnZleTm4mkTIvYotuZGev3hUsC0G90djKmjYgrHPgeR0yc79owYJK3NQSfwTkaE9OwstdTp_PqBEnqjFjpSh0QXjuBcn2b
 //            [refreshToken] =>
@@ -65,8 +72,10 @@ class IndexController extends BaseController
 //                [link] =>
 //            )
 //                [avatar_original] => https://lh3.googleusercontent.com/a/AATXAJzR5ujUqAAOrDsrQ8zWOQ691dhkQbh2Wyk6z8lD=s96-c
-//
+
         } catch (\Exception $e) {
+            echo $e;
+            exit();
         }
     }
 }

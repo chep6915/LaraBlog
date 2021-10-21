@@ -103,10 +103,10 @@ class BaseController extends Controller
 
         if ($validator->fails())
         {
-            \Illuminate\Validation\Validator::class
-            echo get_class($validator);exit();
-            echo json_encode($validator);exit();
-            $this->throwValidationException($request, $validator);
+//            \Illuminate\Validation\Validator::class
+//            echo get_class($validator);exit();
+//            echo json_encode($validator);exit();
+//            $this->throwValidationException($request, $validator);
         }
 
 //        return $this->getValidationFactory()->make(
