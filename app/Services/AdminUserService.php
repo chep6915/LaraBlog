@@ -8,10 +8,9 @@ use App\Classes\Redis\WlRedis;
 use App\Classes\Util\ErrorFormat;
 use App\Exceptions\JsException;
 use App\Repositories\AdminUserGroupRepository;
+use App\Repositories\AdminUserRepository;
 use App\Repositories\OnlineExaminationRepository;
 use Exception;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -20,28 +19,13 @@ class AdminUserService extends BaseService
 {
 
     /**
-     * @param $request
-     *
-     * @return JsonResponse
-     * Date: 2021/1/18 01:42:30
-     * Author: Rex
+     * @var AdminUserRepository
      */
-    public function login($request): JsonResponse
-    {
-        if (!Auth::attempt(array('account' => $request['account'], 'password' => $request['password']))) {
-            throw new JsException(['code' => 400]);
-        }
-        return repository()->login($request);
-    }
+    private $adminUserRepository;
 
-    /**
-     * @return mixed
-     * Date            2021/1/15 06:44:51
-     * Author          Rex
-     */
-    public function logout()
+    public function __construct(AdminUserRepository $adminUserRepository)
     {
-        return repository()->logout();
+        $this->adminUserRepository = $adminUserRepository;
     }
 
     /**
@@ -318,6 +302,11 @@ class AdminUserService extends BaseService
         return $this->adminUserRepository->getCustomerServiceAndManagerByAdminUserGroupId($field, $condition,
             $orderBy, $page,
             $pageLimit);
+    }
+
+    public function get($field = [], $condition = [], $orderBy = [], $page = 0, $pageLimit = 0)
+    {
+        return $this->adminUserRepository->get($field = [], $condition = [], $orderBy = [], $page = 0, $pageLimit = 0);
     }
 
 }

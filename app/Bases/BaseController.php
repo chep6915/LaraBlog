@@ -84,4 +84,32 @@ class BaseController extends Controller
         return call_user_func([new $class, $method]);
     }
 
+    /**
+     * @param Request $request
+     * @param array $rules
+     * @param array $messages
+     * @param array $customAttributes
+     * @return array
+     * @throws ValidationException
+     */
+    public function validate(Request $request, array $rules,
+                             array $messages = [], array $customAttributes = [])
+    {
+        $validator = $this->getValidationFactory()->make(
+            $request->all(), $rules, $messages, $customAttributes
+        );
+
+        if ($validator->fails())
+        {
+//            \Illuminate\Validation\Validator::class
+//            echo get_class($validator);exit();
+//            echo json_encode($validator);exit();
+//            $this->throwValidationException($request, $validator);
+        }
+
+//        return $this->getValidationFactory()->make(
+//            $request->all(), $rules, $messages, $customAttributes
+//        )->validate();
+    }
+    
 }

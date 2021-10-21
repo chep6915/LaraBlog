@@ -77,8 +77,8 @@ class AdminUserRepository extends BaseRepository
      * @param array $field
      * @param array $condition
      * @param array $orderBy
-     * @param int   $page
-     * @param int   $pageLimit
+     * @param int $page
+     * @param int $pageLimit
      *
      * @return array
      * Date: 2021/1/20 04:47:14
@@ -294,6 +294,11 @@ class AdminUserRepository extends BaseRepository
         $resultList = $query->get()->toArray();
 
         return ['data' => $resultList, 'length' => $resultLength];
+    }
+
+    public function get($field = [], $condition = [], $orderBy = [], $page = 0, $pageLimit = 0)
+    {
+        $query = $this->adminUser->query();
     }
 
 }
