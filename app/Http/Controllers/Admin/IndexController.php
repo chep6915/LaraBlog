@@ -51,18 +51,22 @@ class IndexController extends BaseController
      */
     public function handleProviderCallback(): \Illuminate\Http\JsonResponse
     {
+        try {
+            $gUser = Socialite::driver('google')->stateless()->user();
+            $gUser = json_decode(json_encode($gUser), true);
 
-        $gUser = Socialite::driver('google')->stateless()->user();
-        $gUser = json_decode(json_encode($gUser), true);
+            $au = $this->indexConcrete->GoogleLogin($gUser);
 
-        $au = $this->indexConcrete->GoogleLogin($gUser);
+            return response()->json(
+                [
+                    'code' => ResponseCode::Success,
+                    'data' => $au['data'],
+                    'total' => $au['total']
+                ]
+            );
+        }catch (\Exception $e){
+            echo json_encode($e);
+        }
 
-        return response()->json(
-            [
-                'code' => ResponseCode::Success,
-                'data' => $au['data'],
-                'total' => $au['total']
-            ]
-        );
     }
 }
