@@ -16,29 +16,24 @@ use App\Bases\Interfaces\BaseRepositoryInterface;
  */
 class BaseRepository implements BaseRepositoryInterface
 {
-    /**
-     * @var mixed
-     */
     public $model;
 
     /**
      * BaseRepository constructor.
      */
-    public function __construct()
+    public function __construct($model)
     {
-        $this->model = model();
+        $this->model = $model;
     }
 
     /**
      * @param array $data
-     *
-     * @return mixed
-     * Date: 2021/1/25 08:23:17
-     * Author: Rex
+     * @return array
      */
-    public function store(array $data)
+    public function store(array $data): array
     {
-        return $this->model->create($data);
+        $rs = $this->model->create($data);
+        return $rs ? ['data' => $rs, 'total' => 1] : ['data' => [], 'total' => 0];
     }
 
     /**

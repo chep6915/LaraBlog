@@ -14,6 +14,12 @@ class AdminUser extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
+     * @var array
+     */
+    protected $guarded = [
+
+    ];
+    /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
