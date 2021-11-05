@@ -42,7 +42,7 @@ class AdminUserService extends BaseService
      * @param $data
      * @return array
      */
-    public function store($data): bool
+    public function store($data): array
     {
         if (isset($data['password'])) {
             $data['password'] = bcrypt($data['password']);

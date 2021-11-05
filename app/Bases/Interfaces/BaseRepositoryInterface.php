@@ -23,6 +23,10 @@ interface BaseRepositoryInterface
 //
 //    public function findCondition($conditions = [], $columns = []); //获取已经处理查询条件的 model(上面所有查询方法都基于这个方法)
 //
+    /**
+     * @param array $data
+     * @return array
+     */
     public function store(array $data);    //添加数据
 
     public function update($id, array $data);   //修改数据 (使用的是批量修改)
