@@ -3,17 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Bases\BaseController;
-use App\Concretes\AdminUserConcrete;
 use App\Concretes\IndexConcrete;
 use App\Enums\ResponseCode;
-use App\Exceptions\JsException;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use function PHPUnit\Framework\exactly;
 
 class IndexController extends BaseController
 {
@@ -29,9 +23,11 @@ class IndexController extends BaseController
         parent::__construct($request);
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function login(): \Illuminate\Http\JsonResponse
     {
-
         return response()->json(
             [
                 'code' => ResponseCode::Success,
@@ -41,13 +37,19 @@ class IndexController extends BaseController
         );
     }
 
+    /**
+     * @return RedirectResponse
+     */
     public function redirectToProvider(): RedirectResponse
     {
         return Socialite::driver('google')->stateless()->redirect();
 
     }
 
-    public function handleProviderCallback()
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function handleProviderCallback(): \Illuminate\Http\JsonResponse
     {
 
         $gUser = Socialite::driver('google')->stateless()->user();

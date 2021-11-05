@@ -47,9 +47,9 @@ class AdminUserController extends BaseController
 
     /**
      * @param $data
-     * @return bool
+     * @return array
      */
-    public function store($data): bool
+    public function store($data): array
     {
         return $this->adminUserService->store($data);
     }
