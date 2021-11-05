@@ -4,24 +4,40 @@ namespace App\Concretes;
 
 use App\Bases\BaseConcrete;
 use App\Classes\OperationRecord;
+use App\Enums\ResponseCode;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Services\AdminUserService;
 
 class AdminUserConcrete extends BaseConcrete
 {
 
     /**
-     * @var AdminUserService
+     * @var AdminUserController
      */
-    private $adminUserService;
+    private $adminUserController;
 
-    public function __construct(AdminUserService $adminUserService)
+    public function __construct(AdminUserController $adminUserController)
     {
-        $this->adminUserService = $adminUserService;
+        $this->adminUserController = $adminUserController;
     }
 
-    public function get($field = [], $condition = [], $orderBy = [], $page = 0, $pageLimit = 0)
+    public function get(array $field = [], array $condition = [], array $orderBy = [], int $page = 0, int $pageLimit = 0): array
     {
-        return $this->adminUserService->get($field = [], $condition = [], $orderBy = [], $page = 0, $pageLimit = 0);
+        return $this->adminUserController->get($field, $condition, $orderBy, $page, $pageLimit);
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
+    public function createOrGetAdminUser($data): array
+    {
+        $au = $this->adminUserController->get([], ['email' => $data['email']]);
+
+        if (!$au['total']) {
+            $au = $this->adminUserController->store($data);
+        }
+
+        return $au;
+    }
 }

@@ -6,11 +6,14 @@ use App\Bases\BaseConcrete;
 use App\Classes\OperationRecord;
 use App\Classes\Redis\WlRedis;
 use App\Classes\Util\ErrorFormat;
+use App\Enums\ResponseCode;
 use App\Exceptions\JsException;
 use App\Repositories\AdminUserGroupRepository;
 use App\Repositories\OnlineExaminationRepository;
+use App\Services\AdminUserService;
 use App\Services\IndexService;
 use Exception;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -22,15 +25,45 @@ class IndexConcrete extends BaseConcrete
      * @var IndexService
      */
     private $indexService;
+    /**
+     * @var AdminUserService
+     */
+    private $adminUserService;
+    /**
+     * @var AdminUserConcrete
+     */
+    private $adminUserConcrete;
 
-    public function __construct(IndexService $indexService)
+    public function __construct(
+        IndexService     $indexService,
+        AdminUserConcrete $adminUserConcrete
+    )
     {
         $this->indexService = $indexService;
+        $this->adminUserConcrete = $adminUserConcrete;
     }
 
-    public function login($request)
+    /**
+     * @param $request
+     * @return \App\Models\AdminUser
+     */
+    public function login($request): \App\Models\AdminUser
     {
         return $this->indexService->login($request);
+    }
+
+    /**
+     * @param $gUser
+     * @return array|void
+     */
+    public function GoogleLogin($gUser)
+    {
+        $auData = Arr::only($gUser, ['name', 'email', 'avatar', 'avatar_original', 'nickname']);
+        $auData = array_merge($auData,Arr::only($gUser['user'],['given_name','family_name','picture','locale']));
+        $auData['Google_id'] = $gUser['user']['id'];
+        $auData['enable_password_login'] = 0;
+
+        return $this->adminUserConcrete->createOrGetAdminUser($auData);
     }
 
     /**
@@ -170,8 +203,8 @@ class IndexConcrete extends BaseConcrete
     /**
      * @param       $examinationPaperId
      * @param array $orderBy
-     * @param int   $page
-     * @param int   $pageLimit
+     * @param int $page
+     * @param int $pageLimit
      *
      * @return array
      */
@@ -197,8 +230,8 @@ class IndexConcrete extends BaseConcrete
      * @param array $field
      * @param array $condition
      * @param array $orderBy
-     * @param int   $page
-     * @param int   $pageLimit
+     * @param int $page
+     * @param int $pageLimit
      *
      * @return array
      */
@@ -227,8 +260,8 @@ class IndexConcrete extends BaseConcrete
      * @param array $field
      * @param array $condition
      * @param array $orderBy
-     * @param int   $page
-     * @param int   $pageLimit
+     * @param int $page
+     * @param int $pageLimit
      *
      * @return array
      */
@@ -251,8 +284,8 @@ class IndexConcrete extends BaseConcrete
      * @param array $field
      * @param array $condition
      * @param array $orderBy
-     * @param int   $page
-     * @param int   $pageLimit
+     * @param int $page
+     * @param int $pageLimit
      *
      * @return array
      */
@@ -272,8 +305,8 @@ class IndexConcrete extends BaseConcrete
      * @param array $field
      * @param array $condition
      * @param array $orderBy
-     * @param int   $page
-     * @param int   $pageLimit
+     * @param int $page
+     * @param int $pageLimit
      *
      * @return array
      */
@@ -297,8 +330,8 @@ class IndexConcrete extends BaseConcrete
      * @param array $field
      * @param array $condition
      * @param array $orderBy
-     * @param int   $page
-     * @param int   $pageLimit
+     * @param int $page
+     * @param int $pageLimit
      *
      * @return array
      */

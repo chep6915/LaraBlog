@@ -12,56 +12,128 @@ use Illuminate\Support\Arr;
 
 class AdminUserRepository extends BaseRepository
 {
+    /**
+     * @param AdminUser $adminUser
+     */
+    public function __construct(AdminUser $adminUser)
+    {
+        $this->model = $adminUser;
+    }
 
     /**
-     * @param $request
-     *
-     * @return JsonResponse
-     * Date: 2021/1/20 04:33:15
-     * Author: Rex
+     * @param array $field
+     * @param array $condition
+     * @param array $orderBy
+     * @param int $page
+     * @param int $pageLimit
+     * @return array
      */
-    public function login($request): JsonResponse
+    public function get(array $field = [], array $condition = [], array $orderBy = [], int $page = 0, int $pageLimit = 0): array
     {
+        $query = $this->model->query();
 
-        $aum = model()->newModelQuery();
-
-        $aum->leftJoin('admin_user_group', 'admin_user.admin_user_group_id', '=', 'admin_user_group.id')
-            ->select
-            (
-                'admin_user.password',
-                'admin_user.id as admin_user_id',
-                'admin_user.name as admin_user_name',
-                'admin_user.account as admin_user_account',
-                'admin_user.email as admin_user_email',
-                'admin_user.admin_user_group_id as admin_user_group_id',
-                'admin_user_group.name as admin_user_group_name',
-                'admin_user_group.admin_user_group_parent_id as admin_user_group_parent_id',
-                'admin_user.enable as admin_user_enable',
-                'admin_user_group.enable as admin_user_group_enable',
-                'admin_user.created_at as admin_user_created_at',
-                'admin_user.updated_at as admin_user_updated_at',
-                'admin_user_group.updated_at as admin_user_group_created_at',
-                'admin_user_group.updated_at as admin_user_group_updated_at'
+        if (!empty($field)) {
+            $query->select($field);
+        } else {
+            $query->selectRaw(
+                "
+                *
+                "
             );
+        }
 
-        $aum->where('admin_user.account', $request['account']);
+        $condition = Arr::only(
+            $condition, [
+                'id',
+                'account',
+                'name',
+                'admin_user_group_id',
+                'email',
+                'email_verified_at',
+                'admin_user_last_ip',
+                'last_update_admin_user_id',
+                'is_frozen',
+            ]
+        );
 
-        $au = $aum->first()->toArray();
+        foreach ($condition as $key => $value) {
+            if (is_array($value) || $value instanceof Arrayable) {
+                $query->whereIn($key, $value);
+            } else {
+                $query->where($key, $value);
+            }
+        }
 
-        $au['admin_user_group'][0]['admin_user_group_id'] = $au['admin_user_group_id'];
-        $au['admin_user_group'][0]['admin_user_group_name'] = $au['admin_user_group_name'];
-        $au['admin_user_group'][0]['admin_user_group_parent_id'] = $au['admin_user_group_parent_id'];
-        $au['admin_user_group'][0]['admin_user_group_enable'] = $au['admin_user_group_enable'];
+        if (!empty($orderBy)) {
+            foreach ($orderBy as $key => $val) {
+                $query->orderBy($key, $val);
+            }
+        } else {
+            $query->orderBy('id', 'ASC');
+        }
 
-        unset($au['admin_user_group_id'], $au['admin_user_group_name'], $au['admin_user_group_parent_id'], $au['admin_user_group_enable']);
+        $queryForCount = clone $query;
 
-        $au['last_ip'] = getUserIp();
-        $au = WlRedis::loginSetUser($au);
+        if ($pageLimit != 0) {
+            $query->offset($page * $pageLimit);
+            $query->limit($pageLimit);
+        }
 
-        return ajaxReturn($au);
-        //SHOULD UPDATE LAST IP AND LAST LOGIN TINE HERE TODO LIST
+        $resultLength = $queryForCount->count();
+        $resultList = $query->get()->toArray();
 
+        return ['data' => $resultList, 'total' => $resultLength];
     }
+
+//    /**
+//     * @param $request
+//     *
+//     * @return JsonResponse
+//     * Date: 2021/1/20 04:33:15
+//     * Author: Rex
+//     */
+//    public function login($request): JsonResponse
+//    {
+//
+//        $aum = model()->newModelQuery();
+//
+//        $aum->leftJoin('admin_user_group', 'admin_user.admin_user_group_id', '=', 'admin_user_group.id')
+//            ->select
+//            (
+//                'admin_user.password',
+//                'admin_user.id as admin_user_id',
+//                'admin_user.name as admin_user_name',
+//                'admin_user.account as admin_user_account',
+//                'admin_user.email as admin_user_email',
+//                'admin_user.admin_user_group_id as admin_user_group_id',
+//                'admin_user_group.name as admin_user_group_name',
+//                'admin_user_group.admin_user_group_parent_id as admin_user_group_parent_id',
+//                'admin_user.enable as admin_user_enable',
+//                'admin_user_group.enable as admin_user_group_enable',
+//                'admin_user.created_at as admin_user_created_at',
+//                'admin_user.updated_at as admin_user_updated_at',
+//                'admin_user_group.updated_at as admin_user_group_created_at',
+//                'admin_user_group.updated_at as admin_user_group_updated_at'
+//            );
+//
+//        $aum->where('admin_user.account', $request['account']);
+//
+//        $au = $aum->first()->toArray();
+//
+//        $au['admin_user_group'][0]['admin_user_group_id'] = $au['admin_user_group_id'];
+//        $au['admin_user_group'][0]['admin_user_group_name'] = $au['admin_user_group_name'];
+//        $au['admin_user_group'][0]['admin_user_group_parent_id'] = $au['admin_user_group_parent_id'];
+//        $au['admin_user_group'][0]['admin_user_group_enable'] = $au['admin_user_group_enable'];
+//
+//        unset($au['admin_user_group_id'], $au['admin_user_group_name'], $au['admin_user_group_parent_id'], $au['admin_user_group_enable']);
+//
+//        $au['last_ip'] = getUserIp();
+//        $au = WlRedis::loginSetUser($au);
+//
+//        return ajaxReturn($au);
+//        //SHOULD UPDATE LAST IP AND LAST LOGIN TINE HERE TODO LIST
+//
+//    }
 
     /**
      * @return JsonResponse
@@ -86,7 +158,7 @@ class AdminUserRepository extends BaseRepository
      */
     public function index($field = [], $condition = [], $orderBy = [], $page = 0, $pageLimit = 0): array
     {
-        $query = model()->newQuery();
+        $query = $this->model->newQuery();
 
         $query->leftJoin('admin_user_group', 'admin_user.admin_user_group_id', '=', 'admin_user_group.id');
         $query->leftJoinSub(
@@ -164,74 +236,6 @@ class AdminUserRepository extends BaseRepository
     }
 
     /**
-     * @param array $field
-     * @param array $condition
-     * @param array $orderBy
-     * @param int $page
-     * @param int $pageLimit
-     * @return array
-     */
-    //取得系统用户条件为=
-    public function getAdminUser($field = [], $condition = [], $orderBy = [], $page = 0, $pageLimit = 0): array
-    {
-        $resultList = null;
-
-        $query = $this->model->newQuery();
-
-        if (!empty($field)) {
-            $query->select($field);
-        } else {
-            $query->selectRaw(
-                "
-                *
-                "
-            );
-        }
-
-        $condition = Arr::only(
-            $condition, [
-                'id',
-                'account',
-                'name',
-                'admin_user_group_id',
-                'email',
-                'email_verified_at',
-                'admin_user_last_ip',
-                'last_update_admin_user_id',
-                'enable',
-            ]
-        );
-
-        foreach ($condition as $key => $value) {
-            if (is_array($value) || $value instanceof Arrayable) {
-                $query->whereIn($key, $value);
-            } else {
-                $query->where($key, $value);
-            }
-        }
-
-        if (!empty($orderBy)) {
-            foreach ($orderBy as $key => $val) {
-                $query->orderBy($key, $val);
-            }
-        } else {
-            $query->orderBy('id', 'ASC');
-        }
-
-        $queryForCount = clone $query;
-
-        if ($pageLimit != 0) {
-            $query->offset($page * $pageLimit);
-            $query->limit($pageLimit);
-        }
-
-        $resultLength = $queryForCount->count();
-        $resultList = $query->get()->toArray();
-
-        return ['data' => $resultList, 'length' => $resultLength];
-    }
-
-    /**
      * @param array $condition
      * @return mixed
      */
@@ -294,11 +298,6 @@ class AdminUserRepository extends BaseRepository
         $resultList = $query->get()->toArray();
 
         return ['data' => $resultList, 'length' => $resultLength];
-    }
-
-    public function get($field = [], $condition = [], $orderBy = [], $page = 0, $pageLimit = 0)
-    {
-        $query = $this->adminUser->query();
     }
 
 }

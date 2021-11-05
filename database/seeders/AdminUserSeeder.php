@@ -21,11 +21,12 @@ class AdminUserSeeder extends Seeder
                 "name" => env("TEST_GIVEN_NAME").' '.env("TEST_FAMILY_NAME"),
                 "given_name" => env("TEST_GIVEN_NAME"),
                 "family_name" => env("TEST_FAMILY_NAME"),
-                "nick_name" => env("TEST_NICK_NAME"),
+                "nickname" => env("TEST_NICKNAME"),
                 'admin_user_group_id' => 1,
-                'admin_user_locale' => 'zh-TW',
+                'locale' => 'zh-TW',
                 'is_frozen' => 0,
             ]
         )->create();
+
     }
 }

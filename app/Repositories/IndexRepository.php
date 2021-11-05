@@ -2,22 +2,18 @@
 
 namespace App\Repositories;
 
-use App\Bases\BaseService;
+use App\Bases\BaseRepository;
 use App\Classes\OperationRecord;
 use App\Classes\Redis\WlRedis;
 use App\Classes\Redis\XRedis;
-use App\Classes\Util\ErrorFormat;
 use App\Exceptions\JsException;
 use App\Models\AdminUser;
 use App\Repositories\AdminUserGroupRepository;
 use App\Repositories\OnlineExaminationRepository;
 use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
-class IndexRepository extends BaseService
+class IndexRepository extends BaseRepository
 {
 
     /**
@@ -60,40 +56,6 @@ class IndexRepository extends BaseService
      */
     public function index($request)
     {
-        return repository()->index($request);
-    }
-
-    /**
-     * @param $data
-     *
-     * @return bool
-     */
-    public function store($data): bool
-    {
-        try {
-
-            DB::beginTransaction();
-
-            $data['password'] = bcrypt($data['password']);
-            $data['last_update_admin_user_id'] = Auth::User()['admin_user_id'];
-
-            if (repository()->store($data)) {
-
-                DB::commit();
-
-                return true;
-            }
-
-            throw new JsException(['code' => 202]);
-
-        } catch (Exception $e) {
-
-            Log::error("新增adminUser時錯誤，訊息:\n\n" . ErrorFormat::exceptionToString($e));
-
-            DB::rollback();
-
-            return false;
-        }
 
     }
 

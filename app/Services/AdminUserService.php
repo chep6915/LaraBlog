@@ -5,15 +5,12 @@ namespace App\Services;
 use App\Bases\BaseService;
 use App\Classes\OperationRecord;
 use App\Classes\Redis\WlRedis;
-use App\Classes\Util\ErrorFormat;
 use App\Exceptions\JsException;
 use App\Repositories\AdminUserGroupRepository;
 use App\Repositories\AdminUserRepository;
 use App\Repositories\OnlineExaminationRepository;
 use Exception;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class AdminUserService extends BaseService
 {
@@ -29,49 +26,31 @@ class AdminUserService extends BaseService
     }
 
     /**
-     * @param $request
-     *
-     * @return mixed
-     * Date            2021/1/15 16:20:47
-     * Author          Rex
+     * @param array $field
+     * @param array $condition
+     * @param array $orderBy
+     * @param int $page
+     * @param int $pageLimit
+     * @return array
      */
-    public function index($request)
+    public function get(array $field = [], array $condition = [], array $orderBy = [], int $page = 0, int $pageLimit = 0): array
     {
-        return repository()->index($request);
+        return $this->adminUserRepository->get($field, $condition, $orderBy, $page, $pageLimit);
     }
 
     /**
      * @param $data
-     *
-     * @return bool
+     * @return array
      */
     public function store($data): bool
     {
-        try {
-
-            DB::beginTransaction();
-
+        if (isset($data['password'])) {
             $data['password'] = bcrypt($data['password']);
-            $data['last_update_admin_user_id'] = Auth::User()['admin_user_id'];
-
-            if (repository()->store($data)) {
-
-                DB::commit();
-
-                return true;
-            }
-
-            throw new JsException(['code' => 202]);
-
-        } catch (Exception $e) {
-
-            Log::error("新增adminUser時錯誤，訊息:\n\n" . ErrorFormat::exceptionToString($e));
-
-            DB::rollback();
-
-            return false;
         }
 
+        $data['last_update_admin_user_id'] = isset(Auth::User()['admin_user_id']) ? Auth::User()['admin_user_id'] : 0;
+
+        return $this->adminUserRepository->store($data);
     }
 
     /**
@@ -155,8 +134,8 @@ class AdminUserService extends BaseService
     /**
      * @param       $examinationPaperId
      * @param array $orderBy
-     * @param int   $page
-     * @param int   $pageLimit
+     * @param int $page
+     * @param int $pageLimit
      *
      * @return array
      */
@@ -182,8 +161,8 @@ class AdminUserService extends BaseService
      * @param array $field
      * @param array $condition
      * @param array $orderBy
-     * @param int   $page
-     * @param int   $pageLimit
+     * @param int $page
+     * @param int $pageLimit
      *
      * @return array
      */
@@ -212,8 +191,8 @@ class AdminUserService extends BaseService
      * @param array $field
      * @param array $condition
      * @param array $orderBy
-     * @param int   $page
-     * @param int   $pageLimit
+     * @param int $page
+     * @param int $pageLimit
      *
      * @return array
      */
@@ -236,8 +215,8 @@ class AdminUserService extends BaseService
      * @param array $field
      * @param array $condition
      * @param array $orderBy
-     * @param int   $page
-     * @param int   $pageLimit
+     * @param int $page
+     * @param int $pageLimit
      *
      * @return array
      */
@@ -257,8 +236,8 @@ class AdminUserService extends BaseService
      * @param array $field
      * @param array $condition
      * @param array $orderBy
-     * @param int   $page
-     * @param int   $pageLimit
+     * @param int $page
+     * @param int $pageLimit
      *
      * @return array
      */
@@ -282,8 +261,8 @@ class AdminUserService extends BaseService
      * @param array $field
      * @param array $condition
      * @param array $orderBy
-     * @param int   $page
-     * @param int   $pageLimit
+     * @param int $page
+     * @param int $pageLimit
      *
      * @return array
      */
@@ -302,11 +281,6 @@ class AdminUserService extends BaseService
         return $this->adminUserRepository->getCustomerServiceAndManagerByAdminUserGroupId($field, $condition,
             $orderBy, $page,
             $pageLimit);
-    }
-
-    public function get($field = [], $condition = [], $orderBy = [], $page = 0, $pageLimit = 0)
-    {
-        return $this->adminUserRepository->get($field = [], $condition = [], $orderBy = [], $page = 0, $pageLimit = 0);
     }
 
 }

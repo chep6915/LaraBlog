@@ -69,29 +69,17 @@ class IndexService extends BaseService
      */
     public function store($data): bool
     {
-        try {
-
-            DB::beginTransaction();
-
+        if(isset($data['password'])){
             $data['password'] = bcrypt($data['password']);
-            $data['last_update_admin_user_id'] = Auth::User()['admin_user_id'];
+        }
+        $data['last_update_admin_user_id'] = Auth::User()['admin_user_id'];
 
-            if (repository()->store($data)) {
 
-                DB::commit();
 
-                return true;
-            }
-
-            throw new JsException(['code' => 202]);
-
-        } catch (Exception $e) {
-
-            Log::error("新增adminUser時錯誤，訊息:\n\n" . ErrorFormat::exceptionToString($e));
-
-            DB::rollback();
-
-            return false;
+        $au = $this->indexRepository->store($data);
+        if ($au){
+            echo json_encode($au);exit();
+            return true;
         }
 
     }
