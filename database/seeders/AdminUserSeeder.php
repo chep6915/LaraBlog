@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Enums\AdminUser\AdminUserEnablePasswordLoginType;
+use App\Enums\AdminUser\AdminUserFrozenType;
 use App\Models\AdminUser;
 use Illuminate\Database\Seeder;
 
@@ -24,7 +26,8 @@ class AdminUserSeeder extends Seeder
                 "nickname" => env("TEST_NICKNAME"),
                 'admin_user_group_id' => 1,
                 'locale' => 'zh-TW',
-                'is_frozen' => 0,
+                'enable_password_login' => AdminUserEnablePasswordLoginType::EnablePasswordLogin,
+                'is_frozen' => AdminUserFrozenType::NotFrozen,
             ]
         )->create();
 
