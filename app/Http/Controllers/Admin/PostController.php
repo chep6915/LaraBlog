@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Bases\BaseController;
 use App\Models\post;
 use Illuminate\Http\Request;
 
-class PostController extends Controller
+class PostController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -13,16 +14,6 @@ class PostController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
     {
         //
     }

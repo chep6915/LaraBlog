@@ -1,5 +1,6 @@
 <?php
 
+use App\Concretes\IndexConcrete;
 use App\Http\Controllers\Admin\IndexController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,11 +18,16 @@ use Illuminate\Support\Facades\Route;
 
 //Route::resource('photo', 'PhotoController');
 Route::prefix("index")->group(function () {
-    Route::post('login', [IndexController::class, 'login']);     //登入
-//    Route::get('/googleLogin', [IndexController::class, 'googleLogin']);
-//    Route::get('/logout', [IndexController::class, 'logout']);
-    Route::get('/auth', [IndexController::class, 'redirectToProvider']);
-    Route::get('/oauth_callback', [IndexController::class, 'handleProviderCallback']);
+
+    Route::post('login', [IndexConcrete::class, 'login']);     //登入
+
+    //Google登入
+    Route::prefix("google")->group(function () {
+        Route::get('login', [IndexConcrete::class, 'redirectToProvider']);   //Google登入
+        Route::get('oauth_callback', [IndexConcrete::class, 'handleProviderCallback']);
+    });
+
+
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

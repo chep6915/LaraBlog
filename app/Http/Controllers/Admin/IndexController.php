@@ -3,70 +3,59 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Bases\BaseController;
-use App\Concretes\IndexConcrete;
-use App\Enums\ResponseCode;
-use Illuminate\Http\Request;
-use Laravel\Socialite\Facades\Socialite;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Enums\AdminUser\AdminUserEnablePasswordLoginType;
+use App\Models\AdminUser;
+use App\Services\AdminUserService;
+use App\Services\IndexService;
+use Illuminate\Support\Arr;
 
 class IndexController extends BaseController
 {
 
     /**
-     * @var IndexConcrete
+     * @var IndexService
      */
-    private $indexConcrete;
+    private $indexService;
+    /**
+     * @var AdminUserService
+     */
+    private $adminUserService;
 
-    public function __construct(Request $request, IndexConcrete $indexConcrete)
+    public function __construct(
+        IndexService     $indexService,
+        AdminUserService $adminUserService
+    )
     {
-        $this->indexConcrete = $indexConcrete;
-        parent::__construct($request);
+        $this->indexService = $indexService;
+        $this->adminUserService = $adminUserService;
     }
 
     /**
-     * @return \Illuminate\Http\JsonResponse
+     * @param $request
+     * @return AdminUser
      */
-    public function login(): \Illuminate\Http\JsonResponse
+    public function login($request): AdminUser
     {
-        return response()->json(
-            [
-                'code' => ResponseCode::Success,
-                'data' => [$this->indexConcrete->login($this->request)],
-                'total' => 1
-            ]
-        );
+        return $this->indexService->login($request);
     }
 
     /**
-     * @return RedirectResponse
+     * @param $googleUser
+     * @return array
      */
-    public function redirectToProvider(): RedirectResponse
+    public function GoogleLogin($googleUser): array
     {
-        return Socialite::driver('google')->stateless()->redirect();
+        $adminUserData = Arr::only($googleUser, ['name', 'email', 'avatar', 'avatar_original', 'nickname']);
+        $adminUserData = array_merge($adminUserData, Arr::only($googleUser['user'], ['given_name', 'family_name', 'picture', 'locale']));
+        $adminUserData['Google_id'] = $googleUser['user']['id'];
+        $adminUserData['enable_password_login'] = AdminUserEnablePasswordLoginType::DisablePasswordLogin;
 
-    }
+        $adminUser = $this->adminUserService->get([], ['email' => $adminUserData['email']]);
 
-    /**
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function handleProviderCallback(): \Illuminate\Http\JsonResponse
-    {
-        try {
-            $gUser = Socialite::driver('google')->stateless()->user();
-            $gUser = json_decode(json_encode($gUser), true);
-
-            $au = $this->indexConcrete->GoogleLogin($gUser);
-
-            return response()->json(
-                [
-                    'code' => ResponseCode::Success,
-                    'data' => $au['data'],
-                    'total' => $au['total']
-                ]
-            );
-        }catch (\Exception $e){
-            echo json_encode($e);
+        if (!$adminUser['total']) {
+            $adminUser = $this->adminUserService->store($adminUserData);
         }
 
+        return $adminUser;
     }
 }

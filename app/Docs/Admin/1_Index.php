@@ -89,8 +89,8 @@
 /**
  * Google登入
  * @OA\Post (
- *      path="/api/index/auth",
- *      operationId="index/auth",
+ *      path="/api/index/google/login",
+ *      operationId="index/google/login",
  *      tags={"Index"},
  *      summary="Google登入",
  *      description="使用第三方Google登入",

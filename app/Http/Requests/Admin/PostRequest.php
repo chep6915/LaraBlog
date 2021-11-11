@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use App\Bases\BaseRequest;
 
-class IndexRequest extends BaseRequest
+class PostRequest extends BaseRequest
 {
 
     /**
@@ -17,12 +17,21 @@ class IndexRequest extends BaseRequest
         return true;
     }
 
-    public function login(): array
+    public function store(): array
     {
         return [
             'rules' => [
-                'email' => 'required|string|max:20',
-                'password' => 'required|min:6|max:30',
+                'category_id' => 'required|integer',
+                'title' => 'required|string|max:20',
+                'sub_title' => 'required|string|max:20',
+                'tag_id' => 'required|integer',
+                'content' => 'required|string|max:20',
+                'publish_date' => 'date_format:Y-m-d',
+                'public_type' => 'required|integer',
+                'reply_type' => 'required|integer',
+                'is_top' => 'required|integer',
+                'sync_publish_id' => 'required|integer',
+                'status' => 'required|integer'
             ],
             'messages' => [
             ],
@@ -44,23 +53,6 @@ class IndexRequest extends BaseRequest
                 'page_limit' => 'integer|min:1',
                 'sort_column' => 'string',
                 'direction' => 'in:1,-1',
-            ]
-        ];
-    }
-
-    public function store(): array
-    {
-        return [
-            'rule' => [
-                'name' => 'required|string|max:20',
-                'account' => 'required|alpha_num|max:20',
-                'email' => ['required', 'email'],
-                'password' => 'required|min:6|max:30',
-                'c_password' => 'required|same:password',
-                'admin_user_group_id' => 'required|integer',
-                'enable' => 'integer',
-            ],
-            'message' => [
             ]
         ];
     }

@@ -13,6 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -55,7 +56,7 @@ class Handler extends ExceptionHandler
     /**
      * @param Request $request
      * @param Throwable $e
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
+     * @return JsonResponse|\Illuminate\Http\Response|Response
      * @throws Throwable
      */
     public function render($request, Throwable $e)

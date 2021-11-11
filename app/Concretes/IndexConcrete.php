@@ -8,62 +8,84 @@ use App\Classes\Redis\WlRedis;
 use App\Classes\Util\ErrorFormat;
 use App\Enums\ResponseCode;
 use App\Exceptions\JsException;
+use App\Http\Controllers\Admin\IndexController;
 use App\Repositories\AdminUserGroupRepository;
 use App\Repositories\OnlineExaminationRepository;
-use App\Services\AdminUserService;
-use App\Services\IndexService;
 use Exception;
-use Illuminate\Support\Arr;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Laravel\Socialite\Facades\Socialite;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class IndexConcrete extends BaseConcrete
 {
 
     /**
-     * @var IndexService
-     */
-    private $indexService;
-    /**
-     * @var AdminUserService
-     */
-    private $adminUserService;
-    /**
      * @var AdminUserConcrete
      */
     private $adminUserConcrete;
+    /**
+     * @var IndexController
+     */
+    private $indexController;
 
     public function __construct(
-        IndexService     $indexService,
+        Request           $request,
+        IndexController   $indexController,
         AdminUserConcrete $adminUserConcrete
     )
     {
-        $this->indexService = $indexService;
+        $this->indexController = $indexController;
         $this->adminUserConcrete = $adminUserConcrete;
+        parent::__construct($request);
     }
 
     /**
-     * @param $request
-     * @return \App\Models\AdminUser
+     * @return JsonResponse
      */
-    public function login($request): \App\Models\AdminUser
+    public function login(): JsonResponse
     {
-        return $this->indexService->login($request);
+        return response()->json(
+            [
+                'code' => ResponseCode::Success,
+                'data' => [$this->indexController->login($this->request)],
+                'total' => 1
+            ]
+        );
     }
 
     /**
-     * @param $gUser
-     * @return array|void
+     * @return RedirectResponse
      */
-    public function GoogleLogin($gUser)
+    public function redirectToProvider(): RedirectResponse
     {
-        $auData = Arr::only($gUser, ['name', 'email', 'avatar', 'avatar_original', 'nickname']);
-        $auData = array_merge($auData,Arr::only($gUser['user'],['given_name','family_name','picture','locale']));
-        $auData['Google_id'] = $gUser['user']['id'];
-        $auData['enable_password_login'] = 0;
+        return Socialite::driver('google')->stateless()->redirect();
+    }
 
-        return $this->adminUserConcrete->createOrGetAdminUser($auData);
+    /**
+     * @return JsonResponse
+     */
+    public function handleProviderCallback(): JsonResponse
+    {
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+            $googleUser = json_decode(json_encode($googleUser), true);
+
+            $adminUser = $this->indexController->GoogleLogin($googleUser);
+
+            return response()->json(
+                [
+                    'code' => ResponseCode::Success,
+                    'data' => $adminUser['data'],
+                    'total' => $adminUser['total']
+                ]
+            );
+        } catch (Exception $e) {
+            echo json_encode($e);
+        }
     }
 
     /**
